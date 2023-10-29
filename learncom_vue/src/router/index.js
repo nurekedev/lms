@@ -4,6 +4,7 @@ import AboutView from '../views/AboutView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import LoginView from '../views/LoginView.vue'
 import MyAccountView from '../views/dashboard/MyAccountView.vue'
+import CoursesView from '../views/CoursesView.vue'
 
 const routes = [
   {
@@ -32,6 +33,12 @@ const routes = [
     name: 'myaccount',
     component: MyAccountView
   },
+
+  {
+    path: '/courses',
+    name: 'courses',
+    component: CoursesView
+  }
 ]
 
 const router = createRouter({
