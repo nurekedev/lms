@@ -16,8 +16,14 @@ import axios from 'axios'
 
 export default {
     methods: {
-        logout() {
+        async logout() {
             console.log('logout')
+
+            await axios
+                .post('/api/v1/token/logout/')
+                .then(response=>{
+                    console.log('Logged out')
+                })
 
             axios.defaults.headers.common['Authorization'] = ""
             localStorage.removeItem('token')

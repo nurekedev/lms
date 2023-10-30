@@ -25,10 +25,7 @@
 
                     <div class="column is-10">
                         <div class="columns is-multiline">
-                            <div 
-                            class="column is-4"
-                            v-for="course in courses"
-                            v-bind:key="course.id">
+                            <div class="column is-4" v-for="course in courses" v-bind:key="course.id">
 
                                 <div class="card">
                                     <div class="card-image">
@@ -46,25 +43,30 @@
 
                                         <div class="content">
                                             <p>{{ course.short_desription }}</p>
-                                            <a href="#">view more</a>
+
+
+                                            <router-link :to="{ name: 'course-detail', params: { slug: course.slug } }">view
+                                                more</router-link>
+
+
                                         </div>
                                     </div>
 
                                 </div>
 
-                                
+
                             </div>
                             <div class="column is-12">
-                                    <div class="pagination">
-                                        <a class="pagination-previous">Previous</a>
-                                        <a class="pagination-next">Next</a>
-                                        <ul class="pagination-list">
-                                            <li>
-                                                <a class="pagination-link is-current">1</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div class="pagination">
+                                    <a class="pagination-previous">Previous</a>
+                                    <a class="pagination-next">Next</a>
+                                    <ul class="pagination-list">
+                                        <li>
+                                            <a class="pagination-link is-current">1</a>
+                                        </li>
+                                    </ul>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -74,36 +76,23 @@
 </template>
 
 <script>
+import router from '@/router';
 import axios from 'axios';
-export default{
-
-    data(){
-        return{
+export default {
+    data() {
+        return {
             courses: []
-        }
+        };
     },
-
-    mounted(){
-        console.log("Mounted")
-
+    mounted() {
+        console.log("Mounted");
         axios
             .get('/api/v1/courses/')
-            .then(response=>{
-                console.log(response.data)
-
-                this.courses = response.data
-            })
-    }
-
+            .then(response => {
+                console.log(response.data);
+                this.courses = response.data;
+            });
+    },
+    components: { router }
 }
-
-
-
-
-
-
-
-
-
-
 </script>
