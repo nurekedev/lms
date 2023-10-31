@@ -55,6 +55,11 @@
             <a href="#" class="button is-info is-size-3 mt-6 mb-6">Get started</a>
           </div>
 
+          <hr>
+
+          <div class="column is-3" v-for="course in courses" v-bind:key="course.id">
+            <CourseItemComponent :course="course" />
+          </div>
 
         </div>
       </div>
@@ -64,8 +69,31 @@
 </template>
 
 <script>
+import CourseItemComponent from '@/components/CourseItemComponent.vue'
+import axios from 'axios'
 
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
+
+  data() {
+    return {
+      courses: []
+    }
+  },
+
+  components: {
+    CourseItemComponent
+  },
+
+  mounted() {
+
+    axios
+      .get('api/v1/courses/get-newset-courses/')
+      .then(response => {
+        this.courses = response.data
+      })
+  }
+
+
 }
 </script>

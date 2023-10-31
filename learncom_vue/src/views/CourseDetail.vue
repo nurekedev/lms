@@ -26,10 +26,7 @@
                                 {{ activeLesson.long_desription }}
                                 <hr>
 
-                                <article class="media box"
-                                v-for="comment in comments"
-                                v-bind:key="comment.id"
-                                >
+                                <article class="media box" v-for="comment in comments" v-bind:key="comment.id">
                                     <div class="media-content">
                                         <div class="content">
                                             <p>
@@ -54,6 +51,12 @@
                                         <div class="control">
                                             <textarea class="textarea" v-model="comment.content"></textarea>
                                         </div>
+                                    </div>
+
+                                    <div class="notification is-danger" v-for="error in errors" v-bind:key="error">
+
+                                        {{ error }}
+
                                     </div>
 
                                     <div class="field">
@@ -88,6 +91,7 @@ export default {
             course: {},
             lessons: [],
             activeLesson: null,
+            errors: [],
             comments: [],
             comment: {
                 name: '',
@@ -107,35 +111,47 @@ export default {
             });
     },
 
-    methods:{
-        submitComment(){
+    methods: {
+        submitComment() {
             console.log("submit comment")
 
-            axios
-                .post(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
-                .then(response=>{
-                    this.comment.name = ''
-                    this.comment.content = ''
-                    alert('The comment was added')
-                })
-                .catch(error=>{
-                    console.log(error)
-                })
+            this.errors = []
+
+            if (this.comment.name === '') {
+                this.errors.push('The name must be filled out')
+            }
+
+            if (this.comment.content === '') {
+                this.errors.push('The content must be filled out')
+            }
+
+            if (!this.errors.length) {
+                axios
+                    .post(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
+                    .then(response => {
+                        this.comment.name = ''
+                        this.comment.content = ''
+                        this.comments.push(response.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
         },
-        setActiveLesson(lesson){
+        setActiveLesson(lesson) {
             this.activeLesson = lesson
 
             this.getComments()
         },
-        getComments(){
+        getComments() {
 
             axios
                 .get(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/get-comments`)
-                .then(response=>{
+                .then(response => {
                     console.log(response.data)
                     this.comments = response.data
                 })
-                
+
         }
     },
 
