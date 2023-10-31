@@ -13,7 +13,7 @@
                         <h2>Table of contents</h2>
                         <ul>
                             <li v-for="lesson in lessons" v-bind:key="lesson.id">
-                                <a @click="activeLesson = lesson">{{ lesson.title }}</a>
+                                <a @click="setActiveLesson(lesson)">{{ lesson.title }}</a>
                             </li>
                         </ul>
                     </div>
@@ -24,6 +24,44 @@
                             <template v-if="activeLesson">
                                 <h2>{{ activeLesson.title }}</h2>
                                 {{ activeLesson.long_desription }}
+                                <hr>
+
+                                <article class="media box"
+                                v-for="comment in comments"
+                                v-bind:key="comment.id"
+                                >
+                                    <div class="media-content">
+                                        <div class="content">
+                                            <p>
+                                                <strong>{{ comment.name }}</strong>
+                                                {{ comment.created_at }}<br>
+                                                {{ comment.content }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <form v-on:submit.prevent="submitComment()">
+                                    <div class="field">
+                                        <label class="label">Name</label>
+                                        <div class="control">
+                                            <input type="text" class="input" v-model="comment.name">
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="label">Content</label>
+                                        <div class="control">
+                                            <textarea class="textarea" v-model="comment.content"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="control">
+                                            <button type="submit" class="button is-link">submit</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </template>
 
                             <template v-else>
@@ -50,6 +88,11 @@ export default {
             course: {},
             lessons: [],
             activeLesson: null,
+            comments: [],
+            comment: {
+                name: '',
+                content: ''
+            }
         };
     },
     mounted() {
@@ -63,6 +106,40 @@ export default {
                 this.lessons = response.data.lessons;
             });
     },
+
+    methods:{
+        submitComment(){
+            console.log("submit comment")
+
+            axios
+                .post(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
+                .then(response=>{
+                    this.comment.name = ''
+                    this.comment.content = ''
+                    alert('The comment was added')
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+        },
+        setActiveLesson(lesson){
+            this.activeLesson = lesson
+
+            this.getComments()
+        },
+        getComments(){
+
+            axios
+                .get(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/get-comments`)
+                .then(response=>{
+                    console.log(response.data)
+                    this.comments = response.data
+                })
+                
+        }
+    },
+
+
     components: { router }
 }
 </script>
