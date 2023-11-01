@@ -2,6 +2,12 @@ from rest_framework import serializers
 from .models import Cateogory, Course, Lessons, Comment
 
 
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cateogory
+        fields = ('id', 'title', 'slug')
+
 class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course

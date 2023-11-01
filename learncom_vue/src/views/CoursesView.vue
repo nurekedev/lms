@@ -16,9 +16,17 @@
                                 Categories
                             </p>
                             <ul class="menu-list">
-                                <li><a class="is-active">All courses</a></li>
-                                <li><a>Design</a></li>
-                                <li><a>All courses</a></li>
+                                <li>
+                                    <a v-bind:class="{ 'is-active': !activeCategory }" @click="setActiveCategory(null)">
+                                        All courses</a>
+
+                                </li>
+                                <li v-for="category in categories" v-bind:key="category.id"
+                                    @click="setActiveCategory(category)">
+
+                                    <a>{{ category.title }}</a>
+                                </li>
+
                             </ul>
                         </aside>
                     </div>
@@ -57,18 +65,44 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            courses: []
+            courses: [],
+            categories: [],
+            activeCategory: {}
         };
     },
-    mounted() {
+    async mounted() {
         console.log("Mounted");
-        axios
-            .get('/api/v1/courses/')
+
+        await axios
+            .get('api/v1/courses/get-categories/')
             .then(response => {
-                console.log(response.data);
-                this.courses = response.data;
-            });
+                console.log(response.data)
+                this.categories = response.data
+            })
+
+        this.getCourses
+
     },
-    components: { router, CourseItemComponent }
+    components: { router, CourseItemComponent },
+    methods: {
+        setActiveCategory(category) {
+            this.activeCategory = category
+            this.getCourses()
+        },
+
+        getCourses() {
+            let url = '/api/v1/courses/'
+            if (this.activeCategory) {
+                url += '?category_id=' + this.activeCategory.id
+            }
+            axios
+                .get(url)
+                .then(response => {
+                    console.log(response.data);
+                    this.courses = response.data;
+                });
+
+        }
+    }
 }
 </script>

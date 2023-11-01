@@ -2,15 +2,28 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer
-from .models import Course, Lessons, Comment
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer, CategorySerializer
+from .models import Course, Lessons, Comment, Cateogory
 
 # Create your views here.
+
+@api_view(['GET'])
+def get_categories(request):
+
+    categories = Cateogory.objects.all()
+    serializer = CategorySerializer(categories, many=True)
+
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
 def get_courses(request):
+    category_id = request.GET.get('category_id', '')
     courses = Course.objects.all()
+
+    if category_id:
+        courses = courses.filter(categories__in=category_id)
+
     serializer = CourseListSerializer(courses, many=True)
     return Response(serializer.data)
 
