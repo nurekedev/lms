@@ -17,7 +17,7 @@
                             </p>
                             <ul class="menu-list">
                                 <li>
-                                    <a v-bind:class="{ 'is-active': !activeCategory }" @click="setActiveCategory(null)">
+                                    <a v-bind:class="{'is-active': !activeCategory }" @click="setActiveCategory(null)">
                                         All courses</a>
 
                                 </li>
@@ -67,12 +67,13 @@ export default {
         return {
             courses: [],
             categories: [],
-            activeCategory: {}
+            activeCategory: null
         };
     },
     async mounted() {
         console.log("Mounted");
 
+        document.title = 'Courses | LMS'
         await axios
             .get('api/v1/courses/get-categories/')
             .then(response => {
@@ -80,7 +81,7 @@ export default {
                 this.categories = response.data
             })
 
-        this.getCourses
+        this.getCourses()
 
     },
     components: { router, CourseItemComponent },

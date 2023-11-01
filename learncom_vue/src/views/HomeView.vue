@@ -52,7 +52,7 @@
           </div>
 
           <div class="column is-12 has-text-centered">
-            <a href="#" class="button is-info is-size-3 mt-6 mb-6">Get started</a>
+            <a href="/signup" class="button is-info is-size-3 mt-6 mb-6">Get started</a>
           </div>
 
           <hr>
@@ -87,8 +87,9 @@ export default {
 
   mounted() {
 
+    document.title = 'Welcome | LMS'
     axios
-      .get('api/v1/courses/get-newset-courses/')
+      .get('api/v1/courses/get-newest-courses/')
       .then(response => {
         this.courses = response.data
       })

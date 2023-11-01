@@ -9,6 +9,9 @@ class Cateogory(models.Model):
     short_desription = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
 
+    class Meta:
+        verbose_name_plural = 'Categories'
+
     def __str__(self):
         return self.title
     

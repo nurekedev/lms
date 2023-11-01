@@ -64,6 +64,10 @@ export default {
         }
     },
 
+    mounted(){
+        document.title = 'Sign in | LMS'
+    },
+
     methods: {
         submitForm() {
             console.log('subl')

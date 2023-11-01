@@ -75,6 +75,10 @@ export default {
         }
     },
 
+    mounted(){
+        document.title = 'Sign up | LMS'
+    },
+
     methods: {
         submitForm() {
             console.log('sub')
