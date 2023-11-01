@@ -26,47 +26,87 @@
                                 {{ activeLesson.long_desription }}
                                 <hr>
 
-                                <article class="media box" v-for="comment in comments" v-bind:key="comment.id">
-                                    <div class="media-content">
-                                        <div class="content">
-                                            <p>
-                                                <strong>{{ comment.name }}</strong>
-                                                {{ comment.created_at }}<br>
-                                                {{ comment.content }}
-                                            </p>
+                                <template v-if="activeLesson.lesson_type === 'quiz'">
+                                    <h3>{{ quiz.question }}</h3>
+                                    <div class="control">
+                                        <label class="radio">
+                                            <input type="radio" :value="quiz.option1" v-model="selectedAnswer">{{
+                                                quiz.option1 }}
+                                        </label>
+                                    </div>
+
+                                    <div class="control">
+                                        <label class="radio">
+                                            <input type="radio" :value="quiz.option2" v-model="selectedAnswer">{{
+                                                quiz.option2 }}
+                                        </label>
+                                    </div>
+
+                                    <div class="control">
+                                        <label class="radio">
+                                            <input type="radio" :value="quiz.option3" v-model="selectedAnswer">{{
+                                                quiz.option3 }}
+                                        </label>
+                                    </div>
+
+                                    <div class="control is-4">
+                                        <button class="button is-info" @click="submitQuiz">Submit</button>
+                                    </div>
+
+                                    <template v-if="quizResult == 'Correct'">
+                                        <div class="notification is-success mt-4">Correct</div>
+                                    </template>
+
+                                    <template v-if="quizResult == 'Incorrect'">
+                                        <div class="notification is-danger mt-4">Correct</div>
+                                    </template>
+
+
+                                </template>
+
+                                <template v-if="activeLesson.lesson_type === 'article'">
+                                    <article class="media box" v-for="comment in comments" v-bind:key="comment.id">
+                                        <div class="media-content">
+                                            <div class="content">
+                                                <p>
+                                                    <strong>{{ comment.name }}</strong>
+                                                    {{ comment.created_at }}<br>
+                                                    {{ comment.content }}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </article>
+                                    </article>
 
-                                <form v-on:submit.prevent="submitComment()">
-                                    <div class="field">
-                                        <label class="label">Name</label>
-                                        <div class="control">
-                                            <input type="text" class="input" v-model="comment.name">
+
+                                    <form v-on:submit.prevent="submitComment()">
+                                        <div class="field">
+                                            <label class="label">Name</label>
+                                            <div class="control">
+                                                <input type="text" class="input" v-model="comment.name">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="field">
-                                        <label class="label">Content</label>
-                                        <div class="control">
-                                            <textarea class="textarea" v-model="comment.content"></textarea>
+                                        <div class="field">
+                                            <label class="label">Content</label>
+                                            <div class="control">
+                                                <textarea class="textarea" v-model="comment.content"></textarea>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="notification is-danger" v-for="error in errors" v-bind:key="error">
+                                        <div class="notification is-danger" v-for="error in errors" v-bind:key="error">
 
-                                        {{ error }}
+                                            {{ error }}
 
-                                    </div>
-
-                                    <div class="field">
-                                        <div class="control">
-                                            <button type="submit" class="button is-link">submit</button>
                                         </div>
-                                    </div>
-                                </form>
+
+                                        <div class="field">
+                                            <div class="control">
+                                                <button type="submit" class="button is-link">submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </template>
                             </template>
-
                             <template v-else>
                                 <p>{{ course.long_desription }}</p>
                             </template>
@@ -93,6 +133,9 @@ export default {
             activeLesson: null,
             errors: [],
             comments: [],
+            quiz: {},
+            selectedAnswer: '',
+            quizResult: null,
             comment: {
                 name: '',
                 content: ''
@@ -114,6 +157,23 @@ export default {
     },
 
     methods: {
+
+        submitQuiz() {
+            this.quizResult = null
+
+            if (this.selectedAnswer) {
+
+                if (this.selectedAnswer === this.quiz.answer) {
+                    this.quizResult = 'Correct'
+                } else {
+                    this.quizResult = 'Incorrect'
+                }
+
+            } else {
+                alert('Select answer')
+            }
+        },
+
         submitComment() {
             console.log("submit comment")
 
@@ -140,10 +200,25 @@ export default {
                     })
             }
         },
+
         setActiveLesson(lesson) {
             this.activeLesson = lesson
 
-            this.getComments()
+            if (lesson.lesson_type === 'quiz') {
+                this.getQuiz()
+            } else {
+                this.getComments()
+            }
+        },
+        getQuiz() {
+            axios
+                .get(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/get-quiz/`)
+                .then(response => {
+                    this.quiz = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         getComments() {
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cateogory, Course, Lessons, Comment
+from .models import Cateogory, Course, Lessons, Comment, Quiz
 
 # Register your models here.
 class LessonCommentInline(admin.TabularInline):
@@ -32,6 +32,10 @@ class LessonAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('name', 'content',)
+
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ('lesson', 'question')
 
 
 

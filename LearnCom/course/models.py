@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 # Create your models here.
+
+
 class Cateogory(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
@@ -14,7 +16,7 @@ class Cateogory(models.Model):
 
     def __str__(self):
         return self.title
-    
+
 
 class Course(models.Model):
     categories = models.ManyToManyField(Cateogory)
@@ -27,7 +29,7 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def get_image(self):
         if self.image:
             return settings.WEBSITE_URL + self.image.url
@@ -53,20 +55,40 @@ class Lessons(models.Model):
         (QUIZ, 'Quiz')
     )
 
-    course = models.ForeignKey(Course, related_name='lessons',on_delete=models.CASCADE)
-    
+
+    course = models.ForeignKey(
+        Course, related_name='lessons', on_delete=models.CASCADE)
+
     title = models.CharField(max_length=255)
     slug = models.SlugField()
     short_desription = models.TextField(blank=True, null=True)
     long_desription = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=20, choices=CHOICES_STATUS, default=PUBLISHED)
-    lesson_type = models.CharField(max_length=20, choices=CHOICES_TYPE_LESSON, default=ARTICLE)
+    status = models.CharField(
+        max_length=20, choices=CHOICES_STATUS, default=PUBLISHED)
+    lesson_type = models.CharField(
+        max_length=20, choices=CHOICES_TYPE_LESSON, default=ARTICLE)
+    
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
-    course = models.ForeignKey(Course, related_name='comments',on_delete=models.CASCADE)
-    lesson = models.ForeignKey(Lessons, related_name='comments', on_delete=models.CASCADE)
-    name  = models.CharField(max_length=100)
+    course = models.ForeignKey(
+        Course, related_name='comments', on_delete=models.CASCADE)
+    lesson = models.ForeignKey(
+        Lessons, related_name='comments', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(
+        User, related_name='comments', on_delete=models.CASCADE)
+
+
+class Quiz(models.Model):
+    lesson = models.ForeignKey(
+        Lessons, related_name='quizzes', on_delete=models.CASCADE)
+    question = models.CharField(max_length=200, null=True)
+    answer = models.CharField(max_length=200, null=True)
+    option1 = models.CharField(max_length=200, null=True)
+    option2 = models.CharField(max_length=200, null=True)
+    option3 = models.CharField(max_length=200, null=True)

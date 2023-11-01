@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer, CategorySerializer
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer, CategorySerializer, QuizSerializer
 from .models import Course, Lessons, Comment, Cateogory
 
 # Create your views here.
@@ -64,7 +64,7 @@ def get_course(request, slug):
 @api_view(['GET'])
 def get_comments(request, course_slug, lesson_slug):
     lesson = Lessons.objects.get(slug=lesson_slug)
-    serizlizer = CommentSerializer(Comment.objects.all(), many=True)
+    serizlizer = CommentSerializer(lesson.comments.all(), many=True)
 
     return Response(serizlizer.data)
 
@@ -83,5 +83,15 @@ def add_comment(request, course_slug, lesson_slug):
         course=course, lesson=lesson, name=name, content=content, created_by=request.user)
     
     serializer = CommentSerializer(comment)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_quizes(request, course_slug, lesson_slug):
+    lesson = Lessons.objects.get(slug=lesson_slug)
+
+    quiz = lesson.quizzes.first()
+    serializer = QuizSerializer(quiz)
 
     return Response(serializer.data)
