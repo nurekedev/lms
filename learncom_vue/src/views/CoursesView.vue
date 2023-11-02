@@ -75,7 +75,7 @@ export default {
 
         document.title = 'Courses | LMS'
         await axios
-            .get('api/v1/courses/get-categories/')
+            .get('courses/get-categories/')
             .then(response => {
                 console.log(response.data)
                 this.categories = response.data
@@ -92,7 +92,7 @@ export default {
         },
 
         getCourses() {
-            let url = '/api/v1/courses/'
+            let url = 'courses/'
             if (this.activeCategory) {
                 url += '?category_id=' + this.activeCategory.id
             }

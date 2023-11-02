@@ -27,84 +27,23 @@
                                 <hr>
 
                                 <template v-if="activeLesson.lesson_type === 'quiz'">
-                                    <h3>{{ quiz.question }}</h3>
-                                    <div class="control">
-                                        <label class="radio">
-                                            <input type="radio" :value="quiz.option1" v-model="selectedAnswer">{{
-                                                quiz.option1 }}
-                                        </label>
-                                    </div>
-
-                                    <div class="control">
-                                        <label class="radio">
-                                            <input type="radio" :value="quiz.option2" v-model="selectedAnswer">{{
-                                                quiz.option2 }}
-                                        </label>
-                                    </div>
-
-                                    <div class="control">
-                                        <label class="radio">
-                                            <input type="radio" :value="quiz.option3" v-model="selectedAnswer">{{
-                                                quiz.option3 }}
-                                        </label>
-                                    </div>
-
-                                    <div class="control is-4">
-                                        <button class="button is-info" @click="submitQuiz">Submit</button>
-                                    </div>
-
-                                    <template v-if="quizResult == 'Correct'">
-                                        <div class="notification is-success mt-4">Correct</div>
-                                    </template>
-
-                                    <template v-if="quizResult == 'Incorrect'">
-                                        <div class="notification is-danger mt-4">Correct</div>
-                                    </template>
-
-
+                                    <QuizComponent
+                                    v-bind:quiz="quiz"
+                                    />
                                 </template>
 
                                 <template v-if="activeLesson.lesson_type === 'article'">
-                                    <article class="media box" v-for="comment in comments" v-bind:key="comment.id">
-                                        <div class="media-content">
-                                            <div class="content">
-                                                <p>
-                                                    <strong>{{ comment.name }}</strong>
-                                                    {{ comment.created_at }}<br>
-                                                    {{ comment.content }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </article>
+                                    <CommentComponent 
+                                    v-for="comment in comments" 
+                                    v-bind:key="comment.id" 
+                                    v-bind:comment="comment"/>
 
+                                    <AddCommentComponent 
+                                    v-bind:course="course"
+                                    v-bind:active-lesson="activeLesson"
+                                    v-on:submitComment="submitComment"
+                                    />
 
-                                    <form v-on:submit.prevent="submitComment()">
-                                        <div class="field">
-                                            <label class="label">Name</label>
-                                            <div class="control">
-                                                <input type="text" class="input" v-model="comment.name">
-                                            </div>
-                                        </div>
-
-                                        <div class="field">
-                                            <label class="label">Content</label>
-                                            <div class="control">
-                                                <textarea class="textarea" v-model="comment.content"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="notification is-danger" v-for="error in errors" v-bind:key="error">
-
-                                            {{ error }}
-
-                                        </div>
-
-                                        <div class="field">
-                                            <div class="control">
-                                                <button type="submit" class="button is-link">submit</button>
-                                            </div>
-                                        </div>
-                                    </form>
                                 </template>
                             </template>
                             <template v-else>
@@ -125,6 +64,11 @@
 <script>
 import router from '@/router';
 import axios from 'axios';
+import CommentComponent from '@/components/CommentComponent.vue';
+import AddCommentComponent from '@/components/AddCommentComponent.vue';
+import QuizComponent from '@/components/QuizComponent.vue';
+
+
 export default {
     data() {
         return {
@@ -135,18 +79,15 @@ export default {
             comments: [],
             quiz: {},
             selectedAnswer: '',
-            quizResult: null,
-            comment: {
-                name: '',
-                content: ''
-            }
+            quizResult: null
+        
         };
     },
     async mounted() {
 
         const slug = this.$route.params.slug
         await axios
-            .get(`/api/v1/courses/${slug}/`)
+            .get(`/courses/${slug}/`)
             .then(response => {
                 console.log(response.data);
                 this.course = response.data.course;
@@ -158,47 +99,8 @@ export default {
 
     methods: {
 
-        submitQuiz() {
-            this.quizResult = null
-
-            if (this.selectedAnswer) {
-
-                if (this.selectedAnswer === this.quiz.answer) {
-                    this.quizResult = 'Correct'
-                } else {
-                    this.quizResult = 'Incorrect'
-                }
-
-            } else {
-                alert('Select answer')
-            }
-        },
-
-        submitComment() {
-            console.log("submit comment")
-
-            this.errors = []
-
-            if (this.comment.name === '') {
-                this.errors.push('The name must be filled out')
-            }
-
-            if (this.comment.content === '') {
-                this.errors.push('The content must be filled out')
-            }
-
-            if (!this.errors.length) {
-                axios
-                    .post(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
-                    .then(response => {
-                        this.comment.name = ''
-                        this.comment.content = ''
-                        this.comments.push(response.data)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            }
+        submitComment(comment){
+            this.comments.push(comment)
         },
 
         setActiveLesson(lesson) {
@@ -212,7 +114,7 @@ export default {
         },
         getQuiz() {
             axios
-                .get(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/get-quiz/`)
+                .get(`courses/${this.course.slug}/${this.activeLesson.slug}/get-quiz/`)
                 .then(response => {
                     this.quiz = response.data
                 })
@@ -223,7 +125,7 @@ export default {
         getComments() {
 
             axios
-                .get(`api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/get-comments`)
+                .get(`courses/${this.course.slug}/${this.activeLesson.slug}/get-comments`)
                 .then(response => {
                     console.log(response.data)
                     this.comments = response.data
@@ -233,6 +135,6 @@ export default {
     },
 
 
-    components: { router }
+    components: { router, CommentComponent, AddCommentComponent, QuizComponent}
 }
 </script>

@@ -49,10 +49,12 @@ class Lessons(models.Model):
 
     ARTICLE = 'article'
     QUIZ = 'quiz'
+    VIDEO = 'video'
 
     CHOICES_TYPE_LESSON = (
         (ARTICLE, 'Article'),
-        (QUIZ, 'Quiz')
+        (QUIZ, 'Quiz'),
+        (VIDEO, 'Video'),
     )
 
 
@@ -67,6 +69,7 @@ class Lessons(models.Model):
         max_length=20, choices=CHOICES_STATUS, default=PUBLISHED)
     lesson_type = models.CharField(
         max_length=20, choices=CHOICES_TYPE_LESSON, default=ARTICLE)
+    youtube_id = models.CharField(max_length=20, blank=True, null=True)
     
     def __str__(self):
         return self.title

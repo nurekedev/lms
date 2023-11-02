@@ -89,7 +89,7 @@ export default {
 
     document.title = 'Welcome | LMS'
     axios
-      .get('api/v1/courses/get-newest-courses/')
+      .get('/courses/get-newest-courses/')
       .then(response => {
         this.courses = response.data
       })
