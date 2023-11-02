@@ -23,6 +23,17 @@
                         <template v-if="$store.state.user.isAuthenticated">
                             <template v-if="activeLesson">
                                 <h2>{{ activeLesson.title }}</h2>
+                                <hr>
+
+                                <span class="tag is-warning" v-if="activity.status == 'started'" @click="markAsDone">
+                                    Started
+                                </span>
+
+                                <span class="tag is-success" v-else="activity.status == 'done'">
+                                    Done
+                                </span>
+
+                                <hr>
                                 {{ activeLesson.long_desription }}
                                 <hr>
 
@@ -77,7 +88,8 @@ export default {
             comments: [],
             quiz: {},
             selectedAnswer: '',
-            quizResult: null
+            quizResult: null,
+            activity: {},
 
         };
     },
@@ -109,7 +121,38 @@ export default {
             } else {
                 this.getComments()
             }
+
+            this.trackStarted()
         },
+
+        trackStarted() {
+            axios
+                .post(`activities/track-started/${this.$route.params.slug}/${this.activeLesson.slug}/`)
+                .then(response => {
+                    console.log(response.data)
+                    this.activity = response.data
+
+                })
+                .catch(error => {
+                    console.log(error.data)
+                })
+
+        },
+
+        markAsDone() {
+            axios
+                .post(`activities/mark-as-done/${this.$route.params.slug}/${this.activeLesson.slug}/`)
+                .then(response => {
+                    console.log(response.data)
+                    this.activity = response.data
+
+                })
+                .catch(error => {
+                    console.log(error.data)
+                })
+
+        },
+
         getQuiz() {
             axios
                 .get(`courses/${this.course.slug}/${this.activeLesson.slug}/get-quiz/`)
