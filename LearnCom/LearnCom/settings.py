@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'course',
+    'activity',
 
     'rest_framework',
     'rest_framework.authtoken',

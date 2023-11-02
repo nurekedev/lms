@@ -27,22 +27,19 @@
                                 <hr>
 
                                 <template v-if="activeLesson.lesson_type === 'quiz'">
-                                    <QuizComponent
-                                    v-bind:quiz="quiz"
-                                    />
+                                    <QuizComponent v-bind:quiz="quiz" />
+                                </template>
+
+                                <template v-if="activeLesson.lesson_type === 'video'">
+                                    <VideoComponent v-bind:youtube_id="activeLesson.youtube_id" />
                                 </template>
 
                                 <template v-if="activeLesson.lesson_type === 'article'">
-                                    <CommentComponent 
-                                    v-for="comment in comments" 
-                                    v-bind:key="comment.id" 
-                                    v-bind:comment="comment"/>
+                                    <CommentComponent v-for="comment in comments" v-bind:key="comment.id"
+                                        v-bind:comment="comment" />
 
-                                    <AddCommentComponent 
-                                    v-bind:course="course"
-                                    v-bind:active-lesson="activeLesson"
-                                    v-on:submitComment="submitComment"
-                                    />
+                                    <AddCommentComponent v-bind:course="course" v-bind:active-lesson="activeLesson"
+                                        v-on:submitComment="submitComment" />
 
                                 </template>
                             </template>
@@ -67,6 +64,7 @@ import axios from 'axios';
 import CommentComponent from '@/components/CommentComponent.vue';
 import AddCommentComponent from '@/components/AddCommentComponent.vue';
 import QuizComponent from '@/components/QuizComponent.vue';
+import VideoComponent from '@/components/VideoComponent.vue';
 
 
 export default {
@@ -80,7 +78,7 @@ export default {
             quiz: {},
             selectedAnswer: '',
             quizResult: null
-        
+
         };
     },
     async mounted() {
@@ -99,7 +97,7 @@ export default {
 
     methods: {
 
-        submitComment(comment){
+        submitComment(comment) {
             this.comments.push(comment)
         },
 
@@ -135,6 +133,6 @@ export default {
     },
 
 
-    components: { router, CommentComponent, AddCommentComponent, QuizComponent}
+    components: { router, CommentComponent, AddCommentComponent, QuizComponent, VideoComponent }
 }
 </script>
