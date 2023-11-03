@@ -16,7 +16,10 @@
             <div class="navbar-end">
                 <div class="navbar-item">
                     <div class="buttons">
-                        <template v-if="$store.state.user.isAuthenticated">
+                        <template v-if="this.$store.state.user.isAuthenticated">
+                            <router-link to="/dashboard/create_course/" class="button is-primary">
+                                Create Course
+                            </router-link>
                             <router-link to="/dashboard/my-account/" class="button is-info">
                                 My account
                             </router-link>

@@ -2,11 +2,14 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer, CategorySerializer, QuizSerializer, UserSerializer
 from .models import Course, Lessons, Comment, Cateogory
 
 # Create your views here.
+
+
 
 
 @api_view(['GET'])
@@ -82,6 +85,25 @@ def add_comment(request, course_slug, lesson_slug):
     serializer = CommentSerializer(comment)
 
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def create_course(request):
+    print(request.data)
+    course = Course.objects.create(
+        title=request.data.get('title'),
+        slug=slugify(request.data.get('title')),
+        short_desription=request.data.get('short_desription'),
+        long_desription=request.data.get('long_desription'),
+        created_by=request.user
+        )
+    
+    for id in request.data.get('categories'):
+        course.categories.add(id)
+
+    course.save()
+    print(course)
+    return Response({'testt':'WORKSS'})
 
 
 @api_view(['GET'])

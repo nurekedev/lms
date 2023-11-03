@@ -5,6 +5,7 @@
                 <h1 class="title">My Account</h1>
             </div>
         </div>
+        
         <section class="section">
             <div class="columns is-multiline"> 
                 <div class="column is-12">
