@@ -25,6 +25,7 @@ class Course(models.Model):
     short_desription = models.TextField(blank=True, null=True)
     long_desription = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='courses', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='uploads', blank=True, null=True)
 
     def __str__(self):

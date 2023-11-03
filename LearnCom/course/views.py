@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from django.contrib.auth.models import User
 
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer, CategorySerializer, QuizSerializer
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonSerializer, CommentSerializer, CategorySerializer, QuizSerializer, UserSerializer
 from .models import Course, Lessons, Comment, Cateogory
 
 # Create your views here.
@@ -43,8 +44,8 @@ def get_newest_courses(request):
 
 
 @api_view(['GET'])
-@authentication_classes([])
-@permission_classes([])
+# @authentication_classes([])
+# @permission_classes([])
 def get_course(request, slug):
     course = Course.objects.get(slug=slug)
     course_serializer = CourseDetailSerializer(course)
@@ -91,3 +92,16 @@ def get_quizes(request, course_slug, lesson_slug):
     serializer = QuizSerializer(quiz)
 
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_author_courses(request, user_id):
+    user = User.objects.get(pk=user_id)
+    courses = user.courses.all()
+
+    user_serializer = UserSerializer(user, many=False)
+    course_serializer = CourseDetailSerializer(courses, many=True)
+
+    return Response({
+        'courses': course_serializer.data,
+        'created_by': user_serializer.data})
