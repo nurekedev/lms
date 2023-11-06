@@ -19,14 +19,26 @@ class Cateogory(models.Model):
 
 
 class Course(models.Model):
+    DRAFT = 'draft'
+    IN_REVIEW = 'in_review'
+    PUBLISHED = 'published'
+
+    STATUS_CHOISES = (
+        (DRAFT, 'Draft'),
+        (IN_REVIEW, 'In review'),
+        (PUBLISHED, 'Published')
+    )
+
     categories = models.ManyToManyField(Cateogory)
     title = models.CharField(max_length=255)
     slug = models.SlugField()
     short_desription = models.TextField(blank=True, null=True)
     long_desription = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='courses', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(
+        User, related_name='courses', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='uploads', blank=True, null=True)
+    status = models.CharField(max_length=25, choices=STATUS_CHOISES, default=DRAFT)
 
     class Meta:
         ordering: ('-created_at',)
@@ -61,7 +73,6 @@ class Lessons(models.Model):
         (VIDEO, 'Video'),
     )
 
-
     course = models.ForeignKey(
         Course, related_name='lessons', on_delete=models.CASCADE)
 
@@ -74,7 +85,7 @@ class Lessons(models.Model):
     lesson_type = models.CharField(
         max_length=20, choices=CHOICES_TYPE_LESSON, default=ARTICLE)
     youtube_id = models.CharField(max_length=20, blank=True, null=True)
-    
+
     def __str__(self):
         return self.title
 

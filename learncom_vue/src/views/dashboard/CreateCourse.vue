@@ -8,7 +8,8 @@
 
         <section class="section">
 
-            <form v-on:submit.prevent="submitForm">
+            <div class="px-6 py-4 has-background-grey-lighter">
+                <h2 class="subtitle">Meta infomation</h2>
 
                 <div class="field">
                     <label>Title</label>
@@ -28,22 +29,46 @@
                 <div class="field">
                     <div class="select is-multiple">
                         <select multiple size="10" v-model="form.categories">
-                            <option
-                            v-for="category in categories"
-                            v-bind="category.id"
-                            v-bind:value="category.id" 
-                            >
-                            {{ category.title }}
+                            <option v-for="category in categories" v-bind="category.id" v-bind:value="category.id">
+                                {{ category.title }}
                             </option>
 
                         </select>
                     </div>
                 </div>
+            </div>
 
-                <div class="field">
-                    <button class="is-success">Submit</button>
+            <div class="mt-6 px-6 py-4 has-background-grey-lighter">
+                <h2 class="subtitle">Lessons infomation</h2>
+                <hr>
+
+                <div v-for="(lesson, index) in form.lessons" v-bind:key="index" class="mb-4">
+
+                    <h3 class="subtitle is-size-6">Lesson</h3>
+                    <div class="field">
+                        <label>Title</label>
+                        <input type="text" class="input" v-model="lesson.title" :name="`form.lessons[${index}][title]`">
+                    </div>
+                    <div class="field">
+                        <label>Short description</label>
+                        <textarea type="text" class="input" v-model="lesson.short_desription" :name="`form.lessons[${index}][short_desription]`"/>
+                    </div>
+
+                    <div class="field">
+                        <label>Long description</label>
+                        <textarea type="text" class="input" v-model="lesson.long_desription" :name="`form.lessons[${index}][long_desription]`"/>
+                    </div>
+
                 </div>
-            </form>
+                <button class="button is-primary" @click="addLesson()">Add lesson</button>
+            </div>
+
+
+            <div class="field buttons">
+                <button class="button is-success" @click="submitForm('draft')">Save as draft</button>
+                <button class="button is-info" @click="submitForm('review')">Submit for review</button>
+            </div>
+
         </section>
 
     </div>
@@ -59,6 +84,8 @@ export default {
                 short_desription: '',
                 long_desription: '',
                 categories: [],
+                status: '',
+                lessons: [],
             },
             categories: [],
 
@@ -79,15 +106,28 @@ export default {
                 })
         },
 
-        submitForm(){
+        submitForm(status) {
+
+            this.form.status = status
+            console.log(this.form)
             axios
                 .post('courses/create/', this.form)
-                .then(response=>{
+                .then(response => {
                     console.log(response.data)
                 })
-                .catch(error=>{
+                .catch(error => {
                     console.log('error:', error)
                 })
+        },
+
+        addLesson() {
+            console.log("Lesson work")
+
+            this.form.lessons.push({
+                title: '',
+                short_desription: '',
+                long_desription: ''
+            })
         }
     }
 
