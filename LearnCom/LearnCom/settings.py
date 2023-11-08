@@ -38,8 +38,17 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
 }
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "LMS API project",
+    "DESCRIPTION": "DRF LMS Documentation",
+    "VERSION": "1.0.0",
+}
+
 
 
 
@@ -61,6 +70,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'corsheaders',
+    'drf_spectacular',
 ]
 
 CORS_ALLOWED_ORIGINS = [
