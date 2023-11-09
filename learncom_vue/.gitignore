@@ -1,1 +1,18 @@
+# Dependency directories
+/node_modules
 node_modules
+
+# Output of build process
+/dist
+
+# Editor/IDE configuration files
+/.idea
+/.vscode
+
+# Log files
+npm-debug.log
+yarn-error.log
+
+# Runtime data
+npm-session.json
+yarn-error.log
