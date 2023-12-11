@@ -1,4 +1,4 @@
 # lms
 
-login:    admin#gmail.com
+login:    admin@gmail.com
 password: 123
